@@ -1,0 +1,232 @@
+[
+  {
+    "mastery": {
+      "name": "Mastery1",
+      "address": "1A Gunton Rd, London",
+      "carTypes": [
+        "car"
+      ]
+    },
+    "baseUrl": "http://localhost:9003/api/v1/tire-change-times",
+    "listUrl": "/available",
+    "bookingUrl": {
+      "urlStrings": [
+        {
+          "mapper": "identifier",
+          "order": 1,
+          "value": ""
+        },
+
+        {
+          "mapper": "static",
+          "value": "/booking",
+          "order": 2
+        },
+        {
+          "mapper": "static",
+          "value": "/",
+          "order": 0
+        }
+      ]
+    },
+    "mediaType": "xml",
+    "bookingRequest": {
+      "requestType": "PUT",
+      "wrappers": [
+        {
+          "name": "london.tireChangeBookingRequest",
+          "level": 0
+        }
+      ],
+      "fields": [
+        {
+          "name": "contactInformation",
+          "mapper": "input",
+          "format": "string"
+        }
+      ]
+    },
+    "bookingResponse": {
+      "wrappers": [
+        {
+          "name": "tireChangeBookingResponse",
+          "level": 0
+        }
+      ],
+      "fields": [
+        {
+          "name": "uuid",
+          "mapper": "identifier",
+          "format": "UUID"
+        },
+        {
+          "name": "time",
+          "mapper": "time",
+          "format": "string"
+        }
+      ]
+    },
+    "listRequest": {
+      "dateFormat": "YYYY-MM-dd",
+      "params": [
+        {
+          "name": "from",
+          "mapper": "start",
+          "value": 0
+        },
+        {
+          "name": "until",
+          "mapper": "end",
+          "value": 35
+        }
+      ]
+    },
+    "listResponse": {
+      "wrappers": [
+        {
+          "name": "tireChangeTimesResponse",
+          "level": 0
+        },
+        {
+          "name": "availableTime",
+          "level": 1
+        }
+      ],
+      "fields": [
+        {
+          "name": "time",
+          "mapper": "time",
+          "format": "string"
+        },
+        {
+          "name": "uuid",
+          "mapper": "identifier",
+          "format": "UUID"
+        }
+      ]
+    },
+    "errorResponse": {
+      "errorMessageTextField": "Error:",
+      "wrappers": [
+        {
+          "name": "errorResponse",
+          "level": 0
+        }
+      ],
+      "fields": [
+        {
+          "name": "error",
+          "format": "string",
+          "mapper": "errorMessage"
+        }
+      ]
+    }
+  },
+  {
+    "mastery": {
+      "name": "Mastery2",
+      "address": "14 Bury New Rd, Manchester",
+      "carTypes": [
+        "car",
+        "truck"
+      ]
+    },
+    "baseUrl": "http://localhost:9004/api/v2/tire-change-times",
+    "listUrl": "",
+    "bookingUrl": {
+      "urlStrings": [
+        {
+          "mapper": "identifier",
+          "order": 1,
+          "value": ""
+        },
+        {
+          "mapper": "static",
+          "value": "/booking",
+          "order": 2
+        },
+        {
+          "mapper": "static",
+          "value": "/",
+          "order": 0
+        }
+      ]
+    },
+    "mediaType": "json",
+    "bookingRequest": {
+      "requestType": "POST",
+      "fields": [
+        {
+          "name": "contactInformation",
+          "mapper": "input",
+          "format": "string"
+        }
+      ]
+    },
+    "bookingResponse": {
+      "fields": [
+        {
+          "name": "id",
+          "mapper": "identifier",
+          "format": "integer"
+        },
+        {
+          "name": "time",
+          "mapper": "time",
+          "format": "string"
+        },
+        {
+          "name": "available",
+          "mapper": "available",
+          "format": "boolean"
+        }
+      ]
+    },
+    "listRequest": {
+      "dateFormat": "YYYY-MM-dd",
+      "params": [
+        {
+          "name": "from",
+          "mapper": "start",
+          "value": 0
+        },
+        {
+          "name": "amount",
+          "mapper": "quantity",
+          "value": 200
+        }
+      ]
+    },
+    "listResponse": {
+      "fields": [
+        {
+          "name": "time",
+          "mapper": "time",
+          "format": "string"
+        },
+        {
+          "name": "id",
+          "mapper": "identifier",
+          "format": "integer"
+        },
+        {
+          "name": "available",
+          "mapper": "available",
+          "format": "boolean"
+        }
+      ]
+    },
+    "errorResponse": {
+      "errorMessageTextField": "Error:",
+      "fields": [
+        {
+          "name": "message",
+          "format": "string",
+          "mapper": "errorMessage"
+        }
+      ]
+    }
+  }
+]
+
+
