@@ -20,7 +20,7 @@ public class MasteryConfig {
     private BookingResponseApi bookingResponse;
     private ListRequest listRequest;
     private ListResponse listResponse;
-    private ErrorResponse ErrorResponse;
+    private ErrorResponse errorResponse;
 
     public MediaType getMediaType() {
         if (Objects.equals(mediaType, "xml")) {

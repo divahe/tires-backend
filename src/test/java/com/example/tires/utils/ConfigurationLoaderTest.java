@@ -1,8 +1,7 @@
-package com.example.tires.service;
+package com.example.tires.utils;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.junit.jupiter.api.Test;
-import com.example.tires.utils.ConfigurationLoader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import static org.assertj.core.api.Assertions.assertThat;

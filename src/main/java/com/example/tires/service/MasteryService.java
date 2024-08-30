@@ -12,6 +12,7 @@ import java.util.*;
 
 @Data
 @Service
+
 public class MasteryService {
     private final ConfigurationLoader configLoader;
     private final ObjectMapper objectMapper;

@@ -8,21 +8,21 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
-
 @SpringBootTest
 public class MasteryServiceTest {
+
     @Autowired
     private MasteryService masteryService;
 
     @Test
-    void masteryService_getAllMasteryConfigs_returnMasteryConfigs() {
+    public void masteryService_getAllMasteryConfigs_returnMasteryConfigs() {
         List<MasteryConfig> masteryConfigs = masteryService.getAllMasteryConfigs();
         assertThat(masteryConfigs).isNotNull();
         assertThat(masteryConfigs).isInstanceOf(ArrayList.class);
     }
 
     @Test
-    void masteryService_getMasteryConfig_ReturnsCorrectMasteryConfig() {
+    public void masteryService_getMasteryConfig_ReturnsCorrectMasteryConfig() {
         MasteryConfig masteryConfig = masteryService.getMasteryConfig("Mastery1");
         assertNotNull(masteryConfig);
         assertEquals("Mastery1", masteryConfig.getMastery().getName());
@@ -30,7 +30,7 @@ public class MasteryServiceTest {
     }
 
     @Test
-    void masteryService_getMasteryConfig_ReturnsNullWhenNotFound() {
+    public void masteryService_getMasteryConfig_ReturnsNullWhenNotFound() {
         MasteryConfig masteryConfig = masteryService.getMasteryConfig("Random");
         assertNull(masteryConfig);
     }

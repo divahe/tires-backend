@@ -7,7 +7,7 @@
         "car"
       ]
     },
-    "baseUrl": "http://localhost:9003/api/v1/tire-change-times",
+    "baseUrl": "http://127.0.0.1:1080/api/v1/tire-change-times",
     "listUrl": "/available",
     "bookingUrl": {
       "urlStrings": [
@@ -131,7 +131,7 @@
         "truck"
       ]
     },
-    "baseUrl": "http://localhost:9004/api/v2/tire-change-times",
+    "baseUrl": "http://127.0.0.1:1081/api/v2/tire-change-times",
     "listUrl": "",
     "bookingUrl": {
       "urlStrings": [
@@ -155,6 +155,12 @@
     "mediaType": "json",
     "bookingRequest": {
       "requestType": "POST",
+      "wrappers": [
+        {
+          "name": "testWrapper",
+          "level": 0
+        }
+      ],
       "fields": [
         {
           "name": "contactInformation",

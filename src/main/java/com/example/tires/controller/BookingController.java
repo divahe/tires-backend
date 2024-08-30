@@ -17,11 +17,10 @@ public class BookingController {
     private final BookingService bookingService;
 
 
-    @GetMapping("booking")
+    @GetMapping("bookings")
     public BookingListResponseFrontend findBookings() {
         return bookingService.findBookings();
     }
-
 
     @PutMapping("booking/book")
     public ResponseEntity<BookingResponseFrontend> makeBooking(@RequestBody BookingRequestFrontend bookingRequest) {

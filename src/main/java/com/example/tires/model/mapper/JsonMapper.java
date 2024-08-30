@@ -6,6 +6,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import lombok.RequiredArgsConstructor;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.XML;
 import org.springframework.http.MediaType;
@@ -19,7 +20,7 @@ import java.util.List;
 public class JsonMapper {
     private final Gson gson = new Gson();
 
-    public JsonElement mapToJson(MediaType mediaType, String data) {
+    public JsonElement mapToJson(MediaType mediaType, String data) throws JSONException {
         if (mediaType == MediaType.APPLICATION_JSON) {
             return JsonParser.parseString(data);
         } else if (mediaType == MediaType.TEXT_XML) {

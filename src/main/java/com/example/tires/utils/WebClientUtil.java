@@ -4,6 +4,7 @@ import com.example.tires.model.*;
 import com.example.tires.model.mapper.JsonMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
+import org.json.JSONException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -36,7 +37,11 @@ public class WebClientUtil {
                 .onStatus(status -> status.is4xxClientError() || status.is5xxServerError(),
                         clientResponse -> {
                             String body = clientResponse.toString();
-                            throw new RestClientException(jsonMapper.mapToJson(masteryConfig.getMediaType(), body).toString());
+                            try {
+                                throw new RestClientException(jsonMapper.mapToJson(masteryConfig.getMediaType(), body).toString());
+                            } catch (JSONException e) {
+                                throw new RuntimeException(e);
+                            }
                         }).bodyToMono(String.class)
                 .block();
     }

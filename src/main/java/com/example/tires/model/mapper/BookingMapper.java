@@ -21,15 +21,15 @@ import java.util.*;
 public class BookingMapper {
     private final JsonMapper jsonMapper;
 
-    public List<Booking> mapToBookingObjects(MasteryConfig mastery, String rawData) {
+    public List<Booking> mapToBookingObjects(MasteryConfig config, String rawData) {
         try {
-            JsonElement jsonElement = jsonMapper.mapToJson(mastery.getMediaType(), rawData);
+            JsonElement jsonElement = jsonMapper.mapToJson(config.getMediaType(), rawData);
             List<Booking> results;
             JsonArray jsonArray = new JsonArray();
             if (jsonElement.isJsonArray()) {
                 jsonArray = jsonElement.getAsJsonArray();
             } else {
-                JsonElement json = jsonMapper.removeJsonWrappers(mastery.getListResponse().getWrappers(), jsonElement);
+                JsonElement json = jsonMapper.removeJsonWrappers(config.getListResponse().getWrappers(), jsonElement);
                 if (json.isJsonArray()) {
                     jsonArray = json.getAsJsonArray();
                 } else if (json.isJsonObject()){
@@ -38,7 +38,7 @@ public class BookingMapper {
                     throw new RuntimeException("Received data in an unknown format");
                 }
             }
-            results = parseJsonArrayToBookings(mastery, jsonArray);
+            results = parseJsonArrayToBookings(config, jsonArray);
             return results;
         } catch (Exception e) {
             throw new RuntimeException("Error on setup of data content");

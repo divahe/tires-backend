@@ -29,24 +29,31 @@ public class BookingService {
     private final JsonMapper jsonMapper;
 
     public BookingListResponseFrontend findBookings() {
-        List<MasteryConfig> masteries = masteryService.getAllMasteryConfigs();
         List<Booking> bookings = new ArrayList<>();
         Map<String, String> errors = new HashMap<>();
-        for (MasteryConfig mastery : masteries) {
-            try {
-                String rawString = webClientUtil.getRequest(mastery);
-                List<Booking> bookingObjectList = bookingMapper.mapToBookingObjects(mastery, rawString);
-                bookings.addAll(bookingObjectList);
-            } catch (Exception e) {
-                errors.put(mastery.getMastery().getName(), e.getMessage());
-            }
+        for (MasteryConfig masteryConfig : masteryService.getAllMasteryConfigs()) {
+            getBookingsFromMastery(masteryConfig, bookings, errors);
         }
+        return getBookingListResponseFrontend(errors, bookings);
+    }
+
+    private BookingListResponseFrontend getBookingListResponseFrontend(Map<String, String> errors, List<Booking> bookings) {
         BookingListResponseFrontend response = new BookingListResponseFrontend();
         if (!errors.isEmpty()) {
             response.setErrors(errors);
         }
         response.setBookings(filterAvailableBookings(bookings));
         return response;
+    }
+
+    private void getBookingsFromMastery(MasteryConfig masteryConfig, List<Booking> bookings, Map<String, String> errors) {
+        try {
+            String rawString = webClientUtil.getRequest(masteryConfig);
+            List<Booking> bookingObjectList = bookingMapper.mapToBookingObjects(masteryConfig, rawString);
+            bookings.addAll(bookingObjectList);
+        } catch (Exception e) {
+            errors.put(masteryConfig.getMastery().getName(), e.getMessage());
+        }
     }
 
     private List<Booking> filterAvailableBookings(List<Booking> bookings) {
@@ -63,50 +70,45 @@ public class BookingService {
             HttpResponse<String> response = webClientUtil.bookingRequest(config, bookingRequest, requestBody);
             JsonElement responseBody = jsonMapper.mapToJson(config.getMediaType(), response.body());
             if (response.statusCode() == 200) {
-                return getBookingResponseEntity(config, responseBody, frontendResponse);
+                JsonElement data = jsonMapper.removeJsonWrappers(config.getBookingResponse().getWrappers(), responseBody);
+                if (data.isJsonObject()) {
+                    frontendResponse.setInfo("Booking confirmed");
+                    JsonObject jsonObject = data.getAsJsonObject();
+                    List<Field> fields = config.getBookingResponse().getFields();
+                    for (Field field : fields) {
+                        if (Objects.equals(field.getMapper(), "identifier")) {
+                            frontendResponse.setId(jsonObject.get(field.getName()).getAsString());
+                        } else if (Objects.equals(field.getMapper(), "time")){
+                            frontendResponse.setTime(jsonObject.get(field.getName()).getAsString());
+                        }
+                    }
+                    return new ResponseEntity<>(frontendResponse, HttpStatus.OK);
+                } else {
+                    frontendResponse.setInfo("Server configuration error");
+                    return new ResponseEntity<>(frontendResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+                }
             } else {
-                String responseText = getErrorResponse(config, responseBody);
+                String responseText = getErrorResponse(config.getErrorResponse(), responseBody);
                 frontendResponse.setInfo(responseText);
-                return new ResponseEntity<>(frontendResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+                return new ResponseEntity<>(frontendResponse, HttpStatus.valueOf(response.statusCode()));
             }
         } catch (Exception e) {
             return new ResponseEntity<>(frontendResponse, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    private ResponseEntity<BookingResponseFrontend> getBookingResponseEntity(
-            MasteryConfig config, JsonElement responseBody, BookingResponseFrontend response) {
-        JsonElement data = jsonMapper.removeJsonWrappers(config.getBookingResponse().getWrappers(), responseBody);
-        response.setInfo("Booking confirmed");
-        if (data.isJsonObject()) {
-            JsonObject jsonObject = data.getAsJsonObject();
-            List<Field> fields = config.getBookingResponse().getFields();
-            for (Field field : fields) {
-                if (Objects.equals(field.getMapper(), "identifier")) {
-                    response.setId(jsonObject.get(field.getName()).getAsString());
-                } else if (Objects.equals(field.getMapper(), "time")){
-                    response.setTime(jsonObject.get(field.getName()).getAsString());
-                }
-            }
-        } else {
-            response.setInfo("Server configuration error");
-            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-    private String getErrorResponse(MasteryConfig config, JsonElement responseBody) {
-        JsonElement data = jsonMapper.removeJsonWrappers(config.getErrorResponse().getWrappers(), responseBody);
+    private String getErrorResponse(ErrorResponse errorResponseConfig, JsonElement responseBody) {
+        JsonElement data = jsonMapper.removeJsonWrappers(errorResponseConfig.getWrappers(), responseBody);
         String responseText = "Server configuration error";
         if (data.isJsonObject()) {
             JsonObject jsonObject = data.getAsJsonObject();
-            List<Field> fields = config.getErrorResponse().getFields();
+            List<Field> fields = errorResponseConfig.getFields();
             Field field = fields.stream().filter(f -> "errorMessage".equals(f.getMapper())).findFirst().orElse(null);
             if (field != null) {
                 JsonElement message = jsonObject.get(field.getName());
                 responseText = StringEscapeUtils.unescapeHtml4(message.getAsString());
 
-                String regex = String.format("%s(.*)", config.getErrorResponse().getErrorMessageTextField());
+                String regex = String.format("%s(.*)", errorResponseConfig.getErrorMessageTextField());
                 Pattern pattern = Pattern.compile(regex);
                 Matcher matcher = pattern.matcher(responseText);
                 if (matcher.find()) {
