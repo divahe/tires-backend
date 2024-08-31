@@ -45,18 +45,18 @@ public class BookingMapper {
         }
     }
 
-    private List<Booking> parseJsonArrayToBookings(MasteryConfig mastery, JsonArray jsonArray) {
+    private List<Booking> parseJsonArrayToBookings(MasteryConfig config, JsonArray jsonArray) {
         List<Booking> results = new ArrayList<>();
         for (JsonElement jsonBooking : jsonArray) {
-            results.add(constructBooking(mastery, jsonBooking));
+            results.add(constructBooking(config, jsonBooking));
         }
         return results;
     }
 
-    private Booking constructBooking(MasteryConfig mastery, JsonElement jsonElement) {
+    private Booking constructBooking(MasteryConfig config, JsonElement jsonElement) {
         JsonObject jsonObj = jsonElement.getAsJsonObject();
         Booking booking = new Booking();
-        List<Field> fields = mastery.getListResponse().getFields();
+        List<Field> fields = config.getListResponse().getFields();
         Field idField = Helpers.getFieldByMapper(fields, "identifier");
         if (idField != null && Objects.equals(idField.getFormat(), "integer")) {
             booking.setId(jsonObj.get(idField.getName()).getAsInt());
@@ -74,7 +74,7 @@ public class BookingMapper {
             booking.setAvailable(jsonObj.get(availabilityField.getName()).getAsBoolean());
         }
         booking.setUuid(UUID.randomUUID());
-        booking.setMastery(mastery.getMastery());
+        booking.setMastery(config.getMastery());
         return booking;
     }
 

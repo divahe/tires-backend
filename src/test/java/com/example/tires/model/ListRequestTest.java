@@ -24,9 +24,9 @@ public class ListRequestTest {
                 .mapper("end").value("35").build();
         params.add(param1);
         params.add(param2);
-        ListRequest listRequest = ListRequest.builder().params(params).dateFormat("YYYY-MM-dd").build();
+        ListRequest listRequest = ListRequest.builder().params(params).dateFormat("yyyy-MM-dd").build();
         LocalDate now1 = LocalDate.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("YYYY-MM-dd");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         String dateNow = now1.format(formatter);
         String limit = now1.plusDays(35).format(formatter);
         assertThat(listRequest.getParams()).isNotNull();
