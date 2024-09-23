@@ -1,6 +1,7 @@
 ### Tires-backend
 This application is backend for tire change booking application, that mediates booking information from third party masteries.
 Application is set to be configurable and new API configurations can be added to the application.
+Third party code can be found from this repository and this code is used by the current backend: https://github.com/Surmus/tire-change-workshop
 
 ### Database
 Application does not have its own database
